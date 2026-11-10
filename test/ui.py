@@ -26,9 +26,11 @@ fails = []
 
 
 def check(name, cond, extra=""):
-    print(("ok   " if cond else "FAIL ") + name + (f"  [{extra}]" if extra and not cond else ""))
+    print(("ok   " if cond else "FAIL ") + name + (f"  [{extra}]" if extra and not cond else ""), flush=True)
     if not cond:
         fails.append(name)
+        if os.environ.get("GITHUB_ACTIONS"):  # anotación visible en la ejecución de Actions
+            print(f"::error title=Prueba de interfaz::{name} {extra}".strip(), flush=True)
 
 
 with sync_playwright() as p:

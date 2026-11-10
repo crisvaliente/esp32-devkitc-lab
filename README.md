@@ -4,6 +4,8 @@ Laboratorio educativo e interactivo de la placa **ESP32-DevKitC V4** con módulo
 
 **Abrir el laboratorio:** https://crisvaliente.github.io/esp32-devkitc-lab/
 
+[![Verificar sitio publicado](https://github.com/crisvaliente/esp32-devkitc-lab/actions/workflows/verificar.yml/badge.svg)](https://github.com/crisvaliente/esp32-devkitc-lab/actions/workflows/verificar.yml)
+
 ## Propósito
 
 Sirve para aprender el pinout de la placa, practicar conexiones básicas y ver qué haría un programa sencillo antes de tocar hardware real. Es material didáctico: reproduce comportamientos esperados, no ejecuta firmware.
@@ -44,6 +46,7 @@ Sitio estático, sin servidor ni servicios externos. GitHub Pages publica la ram
 | `src/codegen/` | Generador de sketches Arduino |
 | `src/ui/` | Interfaz (React) |
 | `test/` | Pruebas de lógica y de interfaz |
+| `.github/workflows/verificar.yml` | Prueba automática del sitio publicado tras cada cambio en `main` |
 
 ## Desarrollo
 
@@ -60,7 +63,7 @@ python3 test/ui.py                                              # index.html loc
 python3 test/ui.py https://crisvaliente.github.io/esp32-devkitc-lab/   # sitio publicado
 ```
 
-Para publicar un cambio: editar `src/`, ejecutar `npm run build` y subir el commit a `main`.
+Para publicar un cambio: editar `src/`, ejecutar `npm run build` y subir el commit a `main`. Después de cada subida, el workflow **Verificar sitio publicado** espera a que GitHub Pages sirva el commit nuevo y corre las pruebas contra la URL pública.
 
 ## Fuentes y licencias
 

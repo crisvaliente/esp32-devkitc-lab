@@ -1,0 +1,57 @@
+# Verifica el sitio publicado en GitHub Pages después de cada cambio en main.
+# Usa solo runners gratuitos de GitHub Actions. No despliega nada: Pages publica la rama main por su cuenta.
+name: Verificar sitio publicado
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verificar-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITIO: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pruebas de lógica (datos, validación, motor, código)
+        run: npm ci && npm test
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Instalar Playwright y Chromium
+        run: |
+          pip install playwright==1.63.0
+          python -m playwright install --with-deps chromium
+
+      - name: Esperar a que GitHub Pages sirva este commit
+        run: |
+          esperado=$(sha256sum index.html | cut -d' ' -f1)
+          for intento in $(seq 1 60); do
+            servido=$(curl -fsSL "${SITIO}?v=${GITHUB_SHA}-${intento}" | sha256sum | cut -d' ' -f1 || true)
+            if [ "$servido" = "$esperado" ]; then
+              echo "El sitio sirve el index.html de ${GITHUB_SHA}"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Después de 10 minutos, ${SITIO} no sirve el index.html de este commit"
+          exit 1
+
+      - name: Prueba de interfaz contra la URL pública
+        run: python3 test/ui.py "$SITIO"
