@@ -1,0 +1,17 @@
+{
+  "name": "esp32-devkitc-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Laboratorio educativo e interactivo de la placa ESP32-DevKitC V4 (simulación de comportamiento).",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/logic.test.mjs",
+    "test:ui": "python3 test/ui.py"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
